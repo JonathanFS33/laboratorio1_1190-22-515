@@ -1,16 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package vista;
 
-import java.awt.BorderLayout;
-import java.awt.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import javax.swing.JPanel;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import javax.swing.table.DefaultTableModel;
 import logica.Gasolinera;
 
 /**
@@ -18,24 +12,28 @@ import logica.Gasolinera;
  * @author Jonathan
  */
 public class Main extends javax.swing.JFrame implements ActionListener {
-    
+
     String ventas = "";
-    int gasolinaActualSuper;
-    int sumaGasolinaSuper;
+    int gasAgregada = 0;
+    int gasVendida = 0;
     
+    LocalDateTime fecha = LocalDateTime.now();
+    DateTimeFormatter objetoFormatear = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+    String fechaFormateada = fecha.format(objetoFormatear);
+    
+    Gasolinera gasolina = new Gasolinera();
+
     public Main() {
         initComponents();
-        Gasolinera gasolina = new Gasolinera();
         TxtSuper.setText(Integer.toString(gasolina.getBombaSuper()));
         TxtRegular.setText(Integer.toString(gasolina.getBombaRegular()));
         TxtDiesel.setText(Integer.toString(gasolina.getBombaDiesel()));
         BtnAgregar.addActionListener(this);
         BtnVender.addActionListener(this);
         BtnReporte.addActionListener(this);
-        
-        
+        cargarTabla();
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -46,24 +44,32 @@ public class Main extends javax.swing.JFrame implements ActionListener {
     private void initComponents() {
 
         contenido = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        TxtSuper = new javax.swing.JLabel();
-        TxtRegular = new javax.swing.JLabel();
-        TxtDiesel = new javax.swing.JLabel();
         BtnAgregar = new javax.swing.JButton();
         BtnVender = new javax.swing.JButton();
         BtnReporte = new javax.swing.JButton();
         ComboGasolina = new javax.swing.JComboBox<>();
-        TxtCantidad = new javax.swing.JTextField();
+        TxtCantidadCompra = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         ComboVenta = new javax.swing.JComboBox<>();
         jLabel6 = new javax.swing.JLabel();
-        TxtVenta = new javax.swing.JTextField();
+        TxtCantidadVenta = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
-        TxtReporte = new javax.swing.JTextArea();
+        TablaReportes = new javax.swing.JTable();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel4 = new javax.swing.JLabel();
+        TxtDiesel = new javax.swing.JLabel();
+        jPanel3 = new javax.swing.JPanel();
+        jLabel3 = new javax.swing.JLabel();
+        TxtRegular = new javax.swing.JLabel();
+        jPanel4 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        TxtSuper = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -71,66 +77,145 @@ public class Main extends javax.swing.JFrame implements ActionListener {
         contenido.setBackground(new java.awt.Color(255, 255, 255));
         contenido.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        jLabel1.setText("Gasolinera Feliz");
-        contenido.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(309, 11, -1, -1));
-
-        jLabel2.setText("SUPER");
-        contenido.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 60, -1, -1));
-
-        jLabel3.setText("REGULAR");
-        contenido.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 60, -1, -1));
-
-        jLabel4.setText("DIESEL");
-        contenido.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 60, -1, -1));
-
-        TxtSuper.setText("0000");
-        contenido.add(TxtSuper, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 90, -1, -1));
-
-        TxtRegular.setText("0000");
-        contenido.add(TxtRegular, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 90, -1, -1));
-
-        TxtDiesel.setText("0000");
-        contenido.add(TxtDiesel, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 90, -1, -1));
-
         BtnAgregar.setText("Agregar");
-        contenido.add(BtnAgregar, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 350, 103, 39));
+        contenido.add(BtnAgregar, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 260, 103, 39));
 
         BtnVender.setText("Vender");
-        contenido.add(BtnVender, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 350, 94, 39));
+        contenido.add(BtnVender, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 260, 110, 39));
 
         BtnReporte.setText("Cargar reporte");
-        contenido.add(BtnReporte, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 350, -1, 40));
+        contenido.add(BtnReporte, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 320, 120, 50));
 
         ComboGasolina.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Super", "Regular", "Diesel" }));
-        contenido.add(ComboGasolina, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 200, -1, -1));
-        contenido.add(TxtCantidad, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 240, 160, -1));
+        contenido.add(ComboGasolina, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 120, 100, 30));
 
-        jLabel5.setText("Cantidad");
-        contenido.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 240, -1, -1));
+        TxtCantidadCompra.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                TxtCantidadCompraKeyTyped(evt);
+            }
+        });
+        contenido.add(TxtCantidadCompra, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 200, 110, -1));
+
+        jLabel5.setText("Cantidad en galones");
+        contenido.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 160, -1, -1));
 
         ComboVenta.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Super", "Regular", "Diesel" }));
-        contenido.add(ComboVenta, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 200, -1, -1));
+        contenido.add(ComboVenta, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 120, 90, 30));
 
-        jLabel6.setText("Cantidad");
-        contenido.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 240, -1, -1));
-        contenido.add(TxtVenta, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 240, 160, -1));
+        jLabel6.setText("Cantidad en galones");
+        contenido.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 160, -1, -1));
 
-        TxtReporte.setColumns(20);
-        TxtReporte.setLineWrap(true);
-        TxtReporte.setRows(5);
-        jScrollPane1.setViewportView(TxtReporte);
+        TxtCantidadVenta.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                TxtCantidadVentaKeyTyped(evt);
+            }
+        });
+        contenido.add(TxtCantidadVenta, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 200, 120, -1));
 
-        contenido.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 180, 220, 130));
+        TablaReportes.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
 
-        getContentPane().add(contenido, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 800, 400));
+            },
+            new String [] {
+                "Tipo", "Cantidad", "Fecha y hora"
+            }
+        ));
+        jScrollPane1.setViewportView(TablaReportes);
+
+        contenido.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 30, 410, 270));
+
+        jLabel7.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel7.setText("Rellenar bombas");
+        contenido.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 90, -1, -1));
+
+        jLabel8.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel8.setText("Vender gasolina");
+        contenido.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 90, -1, -1));
+
+        jLabel10.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel10.setText("Reporte de ventas");
+        contenido.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 10, -1, -1));
+
+        getContentPane().add(contenido, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 210, 800, 390));
+
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        jLabel1.setText("Gasolinera");
+        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 30, -1, -1));
+
+        jLabel9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/gasolinera icon.png"))); // NOI18N
+        jPanel1.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, -1));
+
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 800, 90));
+
+        jPanel2.setBackground(new java.awt.Color(0, 153, 0));
+        jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jLabel4.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel4.setText("DIESEL");
+        jPanel2.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 30, -1, -1));
+
+        TxtDiesel.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        TxtDiesel.setText("0000");
+        jPanel2.add(TxtDiesel, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 70, -1, -1));
+
+        getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 90, 270, 120));
+
+        jPanel3.setBackground(new java.awt.Color(255, 255, 51));
+        jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel3.setText("REGULAR");
+        jPanel3.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 30, -1, -1));
+
+        TxtRegular.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        TxtRegular.setText("0000");
+        jPanel3.add(TxtRegular, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 70, -1, -1));
+
+        getContentPane().add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 90, 270, 120));
+
+        jPanel4.setBackground(new java.awt.Color(255, 51, 51));
+        jPanel4.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel2.setText("SUPER");
+        jPanel4.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 30, -1, -1));
+
+        TxtSuper.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        TxtSuper.setText("0000");
+        jPanel4.add(TxtSuper, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 70, -1, -1));
+
+        getContentPane().add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 90, 260, 120));
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    /**
-     * @param args the command line arguments
-     */
+    private void TxtCantidadCompraKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_TxtCantidadCompraKeyTyped
+        char c = evt.getKeyChar();
+
+        if (!(Character.isDigit(c))) {
+            evt.consume();
+        }
+        if (TxtCantidadCompra.getText().length() >= 9) {
+            evt.consume();
+        }
+
+    }//GEN-LAST:event_TxtCantidadCompraKeyTyped
+
+    private void TxtCantidadVentaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_TxtCantidadVentaKeyTyped
+        char c = evt.getKeyChar();
+
+        if (!(Character.isDigit(c))) {
+            evt.consume();
+        }
+        if (TxtCantidadVenta.getText().length() >= 9) {
+            evt.consume();
+        }
+    }//GEN-LAST:event_TxtCantidadVentaKeyTyped
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -169,79 +254,112 @@ public class Main extends javax.swing.JFrame implements ActionListener {
     private javax.swing.JButton BtnVender;
     private javax.swing.JComboBox<String> ComboGasolina;
     private javax.swing.JComboBox<String> ComboVenta;
-    private javax.swing.JTextField TxtCantidad;
+    private javax.swing.JTable TablaReportes;
+    private javax.swing.JTextField TxtCantidadCompra;
+    private javax.swing.JTextField TxtCantidadVenta;
     private javax.swing.JLabel TxtDiesel;
     private javax.swing.JLabel TxtRegular;
-    private javax.swing.JTextArea TxtReporte;
     private javax.swing.JLabel TxtSuper;
-    private javax.swing.JTextField TxtVenta;
     private javax.swing.JPanel contenido;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Gasolinera gasolina = new Gasolinera();
         if (e.getSource() == BtnAgregar) {
-            if(ComboGasolina.getSelectedItem().toString().equals("Super")){
-                gasolinaActualSuper = gasolina.getBombaSuper();
-                sumaGasolinaSuper = Integer.parseInt(TxtCantidad.getText());
-                
-                gasolinaActualSuper = gasolinaActualSuper + sumaGasolinaSuper;
-                gasolina.setBombaSuper(gasolinaActualSuper);
-                TxtSuper.setText(Integer.toString(gasolinaActualSuper));
+            gasAgregada = Integer.parseInt(TxtCantidadCompra.getText());
+            
+            if (TxtCantidadCompra.getText().equals("")) {
+                gasolina.mensajeValorInvalido();
             }
-            if(ComboGasolina.getSelectedItem().toString().equals("Regular")){
-                int gasolinaActual = gasolina.getBombaRegular();
-                int sumaGasolina = Integer.parseInt(TxtCantidad.getText());
-                gasolinaActual = gasolinaActual + sumaGasolina;
-                gasolina.setBombaSuper(gasolinaActual);
-                TxtRegular.setText(Integer.toString(gasolinaActual));
+
+            if (ComboGasolina.getSelectedItem().toString().equals("Super")) {
+
+                gasolina.agregarSuper(gasAgregada);
+                TxtSuper.setText(Integer.toString(gasolina.getBombaSuper()));
             }
-            if(ComboGasolina.getSelectedItem().toString().equals("Diesel")){
-                int gasolinaActual = gasolina.getBombaDiesel();
-                int sumaGasolina = Integer.parseInt(TxtCantidad.getText());
-                gasolinaActual = gasolinaActual + sumaGasolina;
-                gasolina.setBombaSuper(gasolinaActual);
-                TxtDiesel.setText(Integer.toString(gasolinaActual));
+            if (ComboGasolina.getSelectedItem().toString().equals("Regular")) {
+
+                gasolina.agregarRegular(gasAgregada);
+                TxtRegular.setText(Integer.toString(gasolina.getBombaRegular()));
             }
+            if (ComboGasolina.getSelectedItem().toString().equals("Diesel")) {
+
+                gasolina.agregarDiesel(gasAgregada);
+                TxtDiesel.setText(Integer.toString(gasolina.getBombaDiesel()));
+            }
+            gasAgregada = 0;
         }
         if (e.getSource() == BtnVender) {
-            if(ComboVenta.getSelectedItem().toString().equals("Super")){
-                int gasolinaActual = gasolina.getBombaSuper();
-                int sumaGasolina = Integer.parseInt(TxtVenta.getText());
-                gasolinaActual = gasolinaActual - sumaGasolina;
-                
-                ventas += Integer.toString(sumaGasolina) + " Super ";
-                gasolina.setBombaSuper(gasolinaActual);
-                TxtSuper.setText(Integer.toString(gasolinaActual));
+            gasVendida = Integer.parseInt(TxtCantidadVenta.getText());
+            actualizarFecha();
+
+            if (ComboVenta.getSelectedItem().toString().equals("Super")) {
+
+                if (gasVendida <= gasolina.getBombaSuper()) {
+                    gasolina.venderSuper(gasVendida);
+                    TxtSuper.setText(Integer.toString(gasolina.getBombaSuper()));
+
+                    gasolina.setReporte("Super", gasVendida, fechaFormateada);
+                } else {
+                    gasolina.mensajeGasInsuficiente();
+                }
+
             }
-            if(ComboVenta.getSelectedItem().toString().equals("Regular")){
-                int gasolinaActual = gasolina.getBombaRegular();
-                int sumaGasolina = Integer.parseInt(TxtVenta.getText());
-                gasolinaActual = gasolinaActual - sumaGasolina;
-                ventas +=Integer.toString(sumaGasolina) + " Regular ";
-                
-                gasolina.setBombaRegular(gasolinaActual);
-                TxtRegular.setText(Integer.toString(gasolinaActual));
+            if (ComboVenta.getSelectedItem().toString().equals("Regular")) {
+
+                if (gasVendida <= gasolina.getBombaRegular()) {
+                    gasolina.venderRegular(gasVendida);
+                    TxtRegular.setText(Integer.toString(gasolina.getBombaRegular()));
+
+                    gasolina.setReporte("Regular", gasVendida, fechaFormateada);
+                } else {
+                    gasolina.mensajeGasInsuficiente();
+                }
+
             }
-            if(ComboVenta.getSelectedItem().toString().equals("Diesel")){
-                int gasolinaActual = gasolina.getBombaDiesel();
-                int sumaGasolina = Integer.parseInt(TxtVenta.getText());
-                gasolinaActual = gasolinaActual - sumaGasolina;
-                ventas += Integer.toString(sumaGasolina) + " Diesel ";
-                gasolina.setBombaDiesel(gasolinaActual);
-                TxtDiesel.setText(Integer.toString(gasolinaActual));
+            if (ComboVenta.getSelectedItem().toString().equals("Diesel")) {
+
+                if (gasVendida <= gasolina.getBombaDiesel()) {
+                    gasolina.venderDiesel(gasVendida);
+                    TxtDiesel.setText(Integer.toString(gasolina.getBombaDiesel()));
+
+                    gasolina.setReporte("Diesel", gasVendida, fechaFormateada);
+                } else {
+                    gasolina.mensajeGasInsuficiente();
+                }
+
             }
+            gasVendida = 0;
         }
         if (e.getSource() == BtnReporte) {
-            TxtReporte.setText(ventas);
+            cargarTabla();
         }
+    }
+    
+    public void actualizarFecha(){
+        fecha = LocalDateTime.now();
+        objetoFormatear = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+        fechaFormateada = fecha.format(objetoFormatear);
+    }
+
+    public void cargarTabla() {
+        DefaultTableModel model = new DefaultTableModel();
+        gasolina.cargarTabla(model);
+        TablaReportes.setModel(model);
     }
 }
